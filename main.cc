@@ -5,11 +5,10 @@
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
-#include <stdio.h>
 #include <fcntl.h>
 #include <algorithm>
 
-#define MAX_STRING_LENGTH 100
+#define MAX_STRING_LENGTH 200
 
 
 
@@ -91,30 +90,31 @@ int main(){
     
     ch = getchar();
     if (ch == '\033') {
-      printf("End\n"); 
+      cout << "Done" << endl; 
       ch=-1;
       break;
+    }
+    else if(ch == 49){
+    	output = "";
+    	cout << endl << "Cleared" << endl;
     }
     else if(ch == -1) {
       continue;
     }
     else {
+    	cout << ch;
+      	output += ch;
       for(int i=0; i < MAX_SIZE; i++){
       	string word = array[i];
 
-   		string prefix("ca");
+   		string prefix(output);
    		if (!word.compare(0, prefix.size(), prefix)){
       		int foo_value = atoi(word.substr(prefix.size()).c_str());
-      		cout << word << endl;
+      		cout << "\r" << word;
       		break;
-      		}
+      	}
       }
-      cout << ch;
-      output += ch;
-      ss << "bash -c 'compgen -A function -abck > outputfile";
-      system(ss.str().c_str());
-   	  cout << ss;
-      //cout << infile.rdbuf() << "\n";
+      
     }
   }
   
@@ -131,10 +131,6 @@ int main(){
   return 0;
 }
 
-string* streamToStringArray(stringstream ss){
-	
-	return NULL;
-}
 
   /*
   ifstream infile;
