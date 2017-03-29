@@ -86,14 +86,21 @@ int main(){
   fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
   
       infile.open("outputfile");
+      string word;
+      int size;
   while(1){
     
+    
+    
     ch = getchar();
-    if (ch == '\033') {
-      cout << "Done" << endl; 
+    if(ch == -1) continue;
+    else if (ch == 10) {
+      cout << "Done: " << output << endl;
+      word = output; 
       ch=-1;
       break;
     }
+
     else if(ch == 49){
     	output = "";
     	cout << endl << "Cleared" << endl;
@@ -101,16 +108,31 @@ int main(){
     else if(ch == -1) {
       continue;
     }
+    
     else {
-    	cout << ch;
-      	output += ch;
+    	size = 20;
+    	string spaces = string(size, ' ');
+    	string bspaces = string(size, '\b');
+    	cout << "\r" << spaces << "\r";
+        if(ch == 127 && output.size() > 0) {
+    		output.erase(output.size() - 1);
+    	}
+    	else{
+    		
+    		output += ch;
+    	}
+    	cout << output;
+    	if (output.size() > 0)
       for(int i=0; i < MAX_SIZE; i++){
-      	string word = array[i];
+      	word = array[i];
 
    		string prefix(output);
    		if (!word.compare(0, prefix.size(), prefix)){
       		int foo_value = atoi(word.substr(prefix.size()).c_str());
-      		cout << "\r" << word;
+      		//string mult = "\b";
+      		//string asdf = string(output.length(), '\b');
+      		cout << "\r" << word << "      " << word;
+      		//output = word;
       		break;
       	}
       }
@@ -120,7 +142,9 @@ int main(){
   
   tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
   fcntl(STDIN_FILENO, F_SETFL, oldf);
-  cout << "Output: " << output << "\n";
+  cout << "Output: " << word << "\n";
+  //cout
+  system(word.c_str());
   if(ch != EOF){
     ungetc(ch,stdin);
     putchar(ch);

@@ -1,4 +1,4 @@
 main:
 	g++ main.cc -o autocomplete
 clean:
-	rm -f *.o
+	rm -f *.o autocomplete output
