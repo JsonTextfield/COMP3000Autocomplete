@@ -8,9 +8,6 @@
 #include <fcntl.h>
 #include <algorithm>
 
-#define MAX_STRING_LENGTH 200
-
-
 
 //http://stackoverflow.com/questions/5897319/how-to-use-stdsort-to-sort-an-array-in-c
 template<class Cont>
@@ -53,11 +50,13 @@ T* end(T (&arr)[N]){
 
 
 using namespace std;
-static const int MAX_SIZE = 100;
+static const int MAX_SIZE = 10000;
 int main(){
   struct termios oldt, newt;
   char ch, command[20];
   string output;
+  string userInput;
+  string suggested;
   int oldf;
   
   stringstream ss;
@@ -95,8 +94,8 @@ int main(){
     ch = getchar();
     if(ch == -1) continue;
     else if (ch == 10) {
-      cout << "Done: " << output << endl;
-      word = output; 
+      cout << "\nDone: " << output << endl;
+      //word = output; 
       ch=-1;
       break;
     }
@@ -131,7 +130,7 @@ int main(){
       		int foo_value = atoi(word.substr(prefix.size()).c_str());
       		//string mult = "\b";
       		//string asdf = string(output.length(), '\b');
-      		cout << "\r" << word << "      " << word;
+      		cout << "\r" << word << "\033["<< word.size()-output.size() <<"D";
       		//output = word;
       		break;
       	}
@@ -140,19 +139,19 @@ int main(){
     }
   }
   
-  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-  fcntl(STDIN_FILENO, F_SETFL, oldf);
-  cout << "Output: " << word << "\n";
-  //cout
-  system(word.c_str());
-  if(ch != EOF){
-    ungetc(ch,stdin);
-    putchar(ch);
-    scanf("%s",command);
-    return 1;
-  }
-      infile.close();
-  return 0;
+	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+	fcntl(STDIN_FILENO, F_SETFL, oldf);
+	cout << "Output: " << word << "\n";
+
+	system(word.c_str());
+	
+	if(ch != EOF){
+		ungetc(ch,stdin);
+		putchar(ch);
+		scanf("%s",command);
+		return 1;
+  	}
+	return 0;
 }
 
 
