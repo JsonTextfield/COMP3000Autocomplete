@@ -52,92 +52,83 @@ T* end(T (&arr)[N]){
 using namespace std;
 static const int MAX_SIZE = 10000;
 int main(){
-  struct termios oldt, newt;
-  char ch, command[20];
-  string output;
-  string userInput;
-  string suggested;
-  int oldf;
+	struct termios oldt, newt;
+	char ch, command[20];
+	string output;
+	string userInput;
+	string suggested;
+	int oldf;
   
-  stringstream ss;
-  ifstream infile;
-//http://stackoverflow.com/questions/5419356/redirect-stdout-stderr-to-a-string  
-  
-  system("bash -c 'compgen -A function -abck > output'");
-  infile.open("output");
-  ss << infile.rdbuf() << "\n";
-  infile.close();
-  
-  string array[MAX_SIZE];
-  int i = 0;
-  while(ss.good() && i < MAX_SIZE){
-  	ss >> array[i];
-  	i++;
-  }
-  sort(begin(array), end(array));
-  
-  
-  tcgetattr(STDIN_FILENO, &oldt);
-  newt = oldt;
-  newt.c_lflag &= ~(ICANON | ECHO);
-  tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-  oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
-  fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
-  
-      infile.open("outputfile");
-      string word;
-      int size;
-  while(1){
-    
-    
-    
-    ch = getchar();
-    if(ch == -1) continue;
-    else if (ch == 10) {
-      cout << "\nDone: " << output << endl;
-      //word = output; 
-      ch=-1;
-      break;
-    }
+	stringstream ss;
+	ifstream infile;
 
-    else if(ch == 49){
-    	output = "";
-    	cout << endl << "Cleared" << endl;
-    }
-    else if(ch == -1) {
-      continue;
-    }
-    
-    else {
-    	size = 20;
-    	string spaces = string(size, ' ');
-    	string bspaces = string(size, '\b');
-    	cout << "\r" << spaces << "\r";
-        if(ch == 127 && output.size() > 0) {
-    		output.erase(output.size() - 1);
-    	}
-    	else{
-    		
-    		output += ch;
-    	}
-    	cout << output;
-    	if (output.size() > 0)
-      for(int i=0; i < MAX_SIZE; i++){
-      	word = array[i];
+	//Reference: http://stackoverflow.com/questions/5419356/redirect-stdout-stderr-to-a-string  
+  
+	system("bash -c 'compgen -A function -abck > output'");
+	infile.open("output");
+	ss << infile.rdbuf() << "\n";
+	infile.close();
+  
+	string array[MAX_SIZE];
+	int i = 0;
+	while(ss.good() && i < MAX_SIZE){
+		ss >> array[i];
+		i++;
+	}
+	sort(begin(array), end(array));
+  
+  
+	tcgetattr(STDIN_FILENO, &oldt);
+	newt = oldt;
+	newt.c_lflag &= ~(ICANON | ECHO);
+	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+	oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+	fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+  
+	string word;
+	
+	while(1){
 
-   		string prefix(output);
-   		if (!word.compare(0, prefix.size(), prefix)){
-      		int foo_value = atoi(word.substr(prefix.size()).c_str());
-      		//string mult = "\b";
-      		//string asdf = string(output.length(), '\b');
-      		cout << "\r" << word << "\033["<< word.size()-output.size() <<"D";
-      		//output = word;
-      		break;
-      	}
-      }
-      
-    }
-  }
+		ch = getchar(); //Does not block
+		if(ch == -1) continue;
+		
+		else if (ch == 10) { //If Enter is pressed...
+			cout << "\nDone: " << output << endl;
+			ch = -1;
+			break;
+		}
+
+		else if(ch == 49){ //If the 1 key is pressed
+			output = "";
+			cout << "\nCleared" << endl;
+		}
+
+	else {
+		int size = 10;
+		string spaces = string(size, ' ');
+		string bspaces = string(size, '\b');
+		cout << "\r" << spaces << "\r";
+		
+		if(ch == 127 && output.size() > 0) { //if backspace is pressed
+			output.erase(output.size() - 1);
+		}
+		
+		else output += ch;
+		
+		cout << output;
+		if (output.size() > 0)
+			for(int i=0; i < MAX_SIZE; i++){
+				word = array[i];
+
+				string prefix(output);
+				if (!word.compare(0, prefix.size(), prefix)){
+					int foo_value = atoi(word.substr(prefix.size()).c_str());
+					cout << "\r" << word << "\033["<< word.size()-output.size() <<"D";
+					break;
+				}
+			}
+	}
+}
   
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 	fcntl(STDIN_FILENO, F_SETFL, oldf);
