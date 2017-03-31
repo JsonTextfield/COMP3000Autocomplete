@@ -45,19 +45,15 @@ T* end(T (&arr)[N]){
 
 
 
-#define PRINTSTR(x) cout << (#x) << endl;
-
-
 
 using namespace std;
 static const int MAX_SIZE = 10000;
 int main(){
 	struct termios oldt, newt;
 	char ch, command[20];
-	string output;
 	string userInput;
-	string suggested;
-	int oldf;
+	
+	int cursorPosition = 0;
   
 	stringstream ss;
 	ifstream infile;
@@ -82,7 +78,7 @@ int main(){
 	newt = oldt;
 	newt.c_lflag &= ~(ICANON | ECHO);
 	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-	oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+	int oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
 	fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
   
 	string word;
@@ -102,9 +98,13 @@ int main(){
 			
 			if(ch != 65 && ch != 66){
 			
-				int diff = word.size() - output.size();
+				int diff = word.size() - userInput.size();
 				
-				if(ch == 67 && diff > 1) escape << diff;
+				if(ch == 67 && diff > 0){
+					escape << diff;
+					
+					//cursorPosition += diff;
+				}
 				
 				
 				escape << ch;
@@ -113,40 +113,40 @@ int main(){
 		}
 		
 		else if (ch == 10) { //If Enter is pressed...
-			cout << "\nDone: " << output << endl;
+			cout << "\nDone: " << userInput << endl;
 			ch = -1;
 			break;
 		}
 
 		else if(ch == 49){ //If the 1 key is pressed
-			output = "";
+			userInput = "";
 			cout << "\nCleared" << endl;
 		}
 
 	else {
-		cout << "\n pressed: "<< int(ch) << endl;
+		//cout << "\n pressed: "<< int(ch) << endl;
 		int size = 10;
 		string spaces = string(size, ' ');
 		string bspaces = string(size, '\b');
 		cout << "\r" << spaces << "\r";
 		
-		if(ch == 127 && output.size() > 0) { //if backspace is pressed
-			output.erase(output.size() - 1);
+		if(ch == 127 && userInput.size() > 0) { //if backspace is pressed
+			userInput.erase(userInput.size() - 1);
 		}
 		
-		else output += ch;
+		else userInput += ch;
 		
-		cout << output;
-		if (output.size() > 0)
+		cout << userInput;
+		if (userInput.size() > 0)
 			for(int i=0; i < MAX_SIZE; i++){
 				word = array[i];
 
-				string prefix(output);
+				string prefix(userInput);
 				if (!word.compare(0, prefix.size(), prefix)){
 					int foo_value = atoi(word.substr(prefix.size()).c_str());
-					int diff = word.size() - output.size();
+					int diff = word.size() - userInput.size();
 					
-					if(diff > 0) cout << "\r\033[1;36m" << word << "\r\033[0m" << output;
+					if(diff > 0) cout << "\r\033[1;36m" << word << "\r\033[0m" << userInput;
 					
 					else cout << "\r" << word;
 					
