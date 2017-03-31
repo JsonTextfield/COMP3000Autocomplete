@@ -10,7 +10,7 @@
 
 
 //http://stackoverflow.com/questions/5897319/how-to-use-stdsort-to-sort-an-array-in-c
-template<class Cont>
+/*template<class Cont>
 typename Cont::iterator begin(Cont& c){
   return c.begin();
 }
@@ -41,7 +41,7 @@ template<class T, std::size_t N>
 T* end(T (&arr)[N]){
   return arr + N;
 }
-
+*/
 
 
 
@@ -59,8 +59,8 @@ int main(){
 	ifstream infile;
 
 	//Reference: http://stackoverflow.com/questions/5419356/redirect-stdout-stderr-to-a-string  
-  
-	system("bash -c 'compgen -A function -abck > output'");
+  	//Reference: https://superuser.com/questions/977693/how-can-i-make-unix-sort-work-properly-using-the-underscore-as-a-field-separator
+	system("bash -c 'compgen -A function -abck | sort -t_ -k1,1 | uniq > output'");
 	infile.open("output");
 	ss << infile.rdbuf() << "\n";
 	infile.close();
@@ -71,7 +71,7 @@ int main(){
 		ss >> array[i];
 		i++;
 	}
-	sort(begin(array), end(array));
+	//sort(begin(array), end(array));
   
   
 	tcgetattr(STDIN_FILENO, &oldt);
@@ -88,7 +88,7 @@ int main(){
 		ch = getchar(); //Does not block
 		if(ch == -1) continue;
 		
-		if(ch == 27){
+		if(ch == 27){ //if a 'special' character is entered...
 		
 			stringstream escape;
 			escape << "\033";
@@ -118,17 +118,25 @@ int main(){
 			break;
 		}
 
-		else if(ch == 49){ //If the 1 key is pressed
+		else if(ch == '1'){
 			userInput = "";
-			cout << "\nCleared" << endl;
+			cout << "\ncleared\n";
+		}
+		else if(ch == ' '){
+			cout << "\nspace\n";
+		}
+		else if(ch == '|'){
+			cout << "\npipe\n";
 		}
 
 	else {
-		//cout << "\n pressed: "<< int(ch) << endl;
-		int size = 10;
+		cout << "\npressed: "<< int(ch) << endl;
+		
+		//the following lines update the suggestion text
+		int size = word.size();
 		string spaces = string(size, ' ');
-		string bspaces = string(size, '\b');
 		cout << "\r" << spaces << "\r";
+		
 		
 		if(ch == 127 && userInput.size() > 0) { //if backspace is pressed
 			userInput.erase(userInput.size() - 1);
@@ -136,23 +144,24 @@ int main(){
 		
 		else userInput += ch;
 		
-		cout << userInput;
+		
 		if (userInput.size() > 0)
 			for(int i=0; i < MAX_SIZE; i++){
 				word = array[i];
 
-				string prefix(userInput);
-				if (!word.compare(0, prefix.size(), prefix)){
-					int foo_value = atoi(word.substr(prefix.size()).c_str());
+				if (word.compare(0, userInput.size(), userInput) == 0){
+					
 					int diff = word.size() - userInput.size();
 					
-					if(diff > 0) cout << "\r\033[1;36m" << word << "\r\033[0m" << userInput;
+					if(diff > 0) cout << "\r\033[1;36m" << word << "\033[0m";
 					
 					else cout << "\r" << word;
 					
 					break;
 				}
 			}
+
+		cout << "\r" << userInput;
 	}
 }
   
