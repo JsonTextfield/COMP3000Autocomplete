@@ -13,7 +13,8 @@ int main(){
 	struct termios oldt, newt;
 	char ch, command[20];
 	string userInput;
-	
+	string curCommands[MAX_SIZE];
+	int commandIndex = 0;
 	int cursorPosition = 0;
 
 	stringstream ss;
@@ -62,7 +63,7 @@ int main(){
 				
 				if(ch == 67 && diff > 0){
 					escape << diff;
-					
+					userInput = word;
 					//cursorPosition += diff;
 				}
 				
@@ -73,8 +74,12 @@ int main(){
 		}
 		
 		else if (ch == 10) { //If Enter is pressed...
+			if (word.size() > userInput.size()) {
+				userInput = word;
+			}
 			cout << "\nDone: " << userInput << endl;
 			ch = -1;
+			
 			break;
 		}
 
@@ -83,10 +88,15 @@ int main(){
 			cout << "\ncleared\n";
 		}
 		else if(ch == ' '){
-			cout << "\nspace\n";
+			userInput += " ";
 		}
 		else if(ch == '|'){
-			cout << "\npipe\n";
+			userInput += "|";
+			curCommands[commandIndex] = userInput;
+			userInput = "";
+			commandIndex++;
+			userInput += " ";
+			//cout << "\npipe\n";
 		}
 
 		else {
@@ -98,8 +108,16 @@ int main(){
 			cout << "\r" << spaces << "\r";
 		
 		
-			if(ch == 127 && userInput.size() > 0) { //if backspace is pressed
-				userInput.erase(userInput.size() - 1);
+			if(ch == 127) { //if backspace is pressed
+				cout << "UserInputSize: " << userInput.size() << endl;
+				if (userInput.size() > 0){
+					userInput.erase(userInput.size() - 1);
+				}
+				if (userInput.size() == 0 && commandIndex > 0){
+					commandIndex --;
+					userInput = curCommands[commandIndex];
+					curCommands[commandIndex] = "";
+				}
 			}
 		
 			else userInput += ch;
@@ -120,16 +138,20 @@ int main(){
 						break;
 					}
 				}
-
+		
 			cout << "\r" << userInput;
 		}
 	}
   
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 	fcntl(STDIN_FILENO, F_SETFL, oldf);
-	cout << "Output: " << word << "\n";
-
-	system(word.c_str());
+	string com = "";
+	for(int z = 0; z < commandIndex; z ++){
+		com += curCommands[z];
+	}
+	com += userInput;
+	system(com.c_str());
+	cout << "Output: " << com << "\n";
 	
 	if(ch != EOF){
 		ungetc(ch,stdin);
