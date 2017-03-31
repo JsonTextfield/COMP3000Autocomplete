@@ -45,7 +45,7 @@ T* end(T (&arr)[N]){
 
 
 
-
+#define PRINTSTR(x) cout << (#x) << endl;
 
 
 
@@ -92,6 +92,26 @@ int main(){
 		ch = getchar(); //Does not block
 		if(ch == -1) continue;
 		
+		if(ch == 27){
+		
+			stringstream escape;
+			escape << "\033";
+			ch = getchar();
+			escape << ch;
+			ch = getchar();
+			
+			if(ch != 65 && ch != 66){
+			
+				int diff = word.size() - output.size();
+				
+				if(ch == 67 && diff > 1) escape << diff;
+				
+				
+				escape << ch;
+				cout << escape.str();
+			}
+		}
+		
 		else if (ch == 10) { //If Enter is pressed...
 			cout << "\nDone: " << output << endl;
 			ch = -1;
@@ -104,6 +124,7 @@ int main(){
 		}
 
 	else {
+		cout << "\n pressed: "<< int(ch) << endl;
 		int size = 10;
 		string spaces = string(size, ' ');
 		string bspaces = string(size, '\b');
@@ -123,7 +144,12 @@ int main(){
 				string prefix(output);
 				if (!word.compare(0, prefix.size(), prefix)){
 					int foo_value = atoi(word.substr(prefix.size()).c_str());
-					cout << "\r" << word << "\033["<< word.size()-output.size() <<"D";
+					int diff = word.size() - output.size();
+					
+					if(diff > 0) cout << "\r\033[1;36m" << word << "\r\033[0m" << output;
+					
+					else cout << "\r" << word;
+					
 					break;
 				}
 			}
