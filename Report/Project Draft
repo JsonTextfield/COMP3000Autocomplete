@@ -1,0 +1,44 @@
+1 Introduction
+  1.1 Context
+	- What is autocomplete
+	- What is BASH
+	- How are commands structured	
+  1.2 Problem Statement
+	- commands requires exact strings which is difficult for users to remember
+	- tabcomplete requires execution to recommend
+	- doesn't always give best suggestion
+  1.3 Result
+	- Commands not including sudo autocomplete
+	- Recommended substring is different colour
+	- Piping works
+  1.4 Outline
+2 Background Information
+	- Compgen
+	- System Call
+	- Cursor
+	- Tab complete
+	- ASCII Colour values
+	- Key Listening
+3 Result
+	- Collect all commands using compgen system call
+	- pipe to sort and remove duplicates and store to file
+	- read from file into an array to use as dictionary
+	- filter reusts based on users input
+	- first result shows up as best match
+	- Right arrow goes to end of autocompleted line
+	- Storing with pipes
+	- Deleteding with pipes
+	- Generating argument lists
+	- Sudo command
+	- File systems
+4 Evaluation
+	- Weren't able to generate arguments list
+	- Wasn't able to incorporate as module
+	- Autocomplete directories
+	- Targeted towards those learning
+5 Conclusion
+  5.1 Summary
+  5.2 Relevance
+  5.3 Future Work
+Contributions of Team Members
+References
