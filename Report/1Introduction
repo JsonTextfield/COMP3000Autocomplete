@@ -1,0 +1,17 @@
+1 Introduction
+
+1.1 Context
+In order to communitcate commands directly to the operating system, Linux provides a Shell terminal known as Bourne Again SHell (BASH). BASH takes text commands and arguments and performs them appopriately. Entering text commands can cause a major problem; users must memorize a list of exact commands or waste time searching for it. Autocompletion of strings is a programming feature that allows users to enter the begining of words and get recommendations for the remainder.
+
+BASH commands will generally carry the form of [command] + [arguments] where command is a single string of instructions and arguments are additional information for the instructions to run. The command line doesn't not neccesarily require arguments and has no upper limits on the amount of arguments possible. A file in the File System (FS) can be used as an argument.
+
+1.2 Problem Statement
+A large portion of learning how to interact with BASH involves learning the commands. When a user begins their journey of learning BASH the majority of time will be spent researching commands; what they're named, what they do, and what arguments they can accept. New users will often remember the first few characters of a command and forget the rest. Giving users an autocomplete feature to allow strings to be generated from few letters lets users save time researching and makes the entire process a little less overwhelming
+
+1.3 Results
+As users input keys, a query string is built. The autocomplete system queries our dictionary and returns the most relevant result back to the user. The string being built by the user will be displayed in a simple white colour with the remainder of our autocomplete being displayed in blue. Should the user want to use our recommendation, simply hitting the right arrow fills in the remainder of the line.
+
+Allowing commands to be piped together is a very powerful feature of BASH. Our autocomplete feature allows piping seamlessly as well as the usuage of the sudo is implemented. 
+
+1.4 Outline
+The report is laid out as follows. Section 2 provides background information prudent to the report, including but not limited to; system calls, the compgen command, the BASH cursor, tab complete, and key listening. Section 3 covers the implementation of an Autocomplete feature and the technical aspects behind it. In section 4 we discuss the benefits of our implementation as well as the difficulties faced. In section 5 we conclude the report and propose future work to be done.
