@@ -1,3 +1,5 @@
+1 Introduction
+
 1.1 Context
 In order to communitcate commands directly to the operating system, Linux provides a Shell terminal known as Bourne Again SHell (BASH). BASH takes text commands and arguments and performs them appopriately. Entering text commands can cause a major problem; users must memorize a list of exact commands or waste time searching for it. Autocompletion of strings is a programming feature that allows users to enter the begining of words and get recommendations for the remainder.
 
