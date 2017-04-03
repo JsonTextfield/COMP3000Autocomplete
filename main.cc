@@ -12,7 +12,8 @@ static const int MAX_SIZE = 10000;
 int main(){
 	struct termios oldt, newt;
 	char ch, command[20];
-	string userInput;
+	string userInput = "";
+	string whole = "";
 	string curCommands[MAX_SIZE];
 	int commandIndex = 0;
 	int cursorPosition = 0;
@@ -45,9 +46,18 @@ int main(){
 	string word;
 	
 	while(1){
+		
+		if(userInput.compare("sudo ") == 0){
+			curCommands[commandIndex] = userInput;
+			userInput = "";
+			commandIndex++;
+			
+			cout << "\r" << whole;
+		}
 
 		ch = getchar(); //Does not block
 		if(ch == -1) continue;
+		
 		
 		if(ch == 27){ //if a 'special' character is entered...
 		
@@ -63,7 +73,10 @@ int main(){
 				
 				if(ch == 67 && diff > 0){
 					escape << diff;
+					whole.erase(whole.size() - userInput.size());
 					userInput = word;
+					
+					whole += word;
 					//cursorPosition += diff;
 				}
 				
@@ -75,83 +88,109 @@ int main(){
 		
 		else if (ch == 10) { //If Enter is pressed...
 			if (word.size() > userInput.size()) {
+				whole.erase(whole.size() - userInput.size());
 				userInput = word;
+				whole += word;
 			}
-			cout << "\nDone: " << userInput << endl;
+			cout << "\nDone: " << whole << endl;
 			ch = -1;
 			
 			break;
 		}
 
-		else if(ch == '1'){
+		/*else if(ch == '1'){
 			userInput = "";
 			cout << "\ncleared\n";
-		}
-		else if(ch == ' '){
+		}*/
+		/*else if(ch == ' '){
 			userInput += " ";
-		}
+		}*/
 		else if(ch == '|'){
-			userInput += "|";
+			userInput += ch;
+			whole += ch;
 			curCommands[commandIndex] = userInput;
 			userInput = "";
 			commandIndex++;
-			userInput += " ";
+			
+			cout << "\r" << whole;
+			
+			//userInput += " ";
 			//cout << "\npipe\n";
 		}
 
 		else {
+
 			//cout << "\npressed: "<< int(ch) << endl;
 		
 			//the following lines update the suggestion text
-			int size = word.size();
+			//int cursorPosition = whole.size() - userInput.size();
+			int size = whole.size() + word.size();
 			string spaces = string(size, ' ');
 			cout << "\r" << spaces << "\r";
 		
 		
 			if(ch == 127) { //if backspace is pressed
-				cout << "UserInputSize: " << userInput.size() << endl;
+				//cout << "UserInputSize: " << whole.size() << endl;
+				spaces = (whole.size()+1, ' ');
+				cout << "\r" << spaces << "\r";
 				if (userInput.size() > 0){
 					userInput.erase(userInput.size() - 1);
 				}
-				if (userInput.size() == 0 && commandIndex > 0){
-					commandIndex --;
-					userInput = curCommands[commandIndex];
-					curCommands[commandIndex] = "";
+				
+				if (userInput.size() == 0){
+					if(commandIndex > 0){
+						commandIndex--;
+						userInput = curCommands[commandIndex];
+						curCommands[commandIndex] = "";
+					}
+					//cout << "\nsize: " <<whole.size()<<endl;
+					
+				}
+				if(whole.size() > 0){
+					whole.erase(whole.size() - 1);
+				}
+				cout << whole;
+			}
+			else {
+				
+				userInput += ch;
+				whole += ch;
+				if(userInput[0] == ' '){
+					userInput.erase(0,1);
+					//if(commandIndex > 0){
+					//	whole.erase(0,1);
+					//}
+					//cout << "\033[D";
 				}
 			}
-		
-			else userInput += ch;
 		
 		
 			if (userInput.size() > 0)
 				for(int i=0; i < MAX_SIZE; i++){
 					word = array[i];
 
-					if (word.compare(0, userInput.size(), userInput) == 0){
+					if (word.compare(0, userInput.size(), userInput) == 0){ //if the user's input matches a program...
 					
-						int diff = word.size() - userInput.size();
-					
-						if(diff > 0) cout << "\r\033[1;36m" << word << "\033[0m";
-					
-						else cout << "\r" << word;
-					
+						int cursorPosition = whole.size() - userInput.size();
+						if(cursorPosition > 0)
+							cout << "\r\033["<< cursorPosition <<"C\033[1;36m" << word << "\033[0m";
+						else
+							cout << "\r\033[1;36m" << word << "\033[0m";
+						
 						break;
 					}
 				}
 		
-			cout << "\r" << userInput;
+			cout << "\r" << whole;
 		}
 	}
   
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 	fcntl(STDIN_FILENO, F_SETFL, oldf);
-	string com = "";
-	for(int z = 0; z < commandIndex; z ++){
-		com += curCommands[z];
-	}
-	com += userInput;
-	system(com.c_str());
-	cout << "Output: " << com << "\n";
+	
+
+	system(whole.c_str());
+	cout << "Output: " << whole << endl;
 	
 	if(ch != EOF){
 		ungetc(ch,stdin);
