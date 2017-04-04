@@ -1,13 +1,10 @@
 Section 4 - Evaluation
 
-4.1 What was implemented
+4.1 What was implemented - Cameron
 	- Autocomplete directories
 
-4.2 Difficulties faced
+4.2 Difficulties faced - Jason
 	- Weren't able to generate arguments list
 	- Wasn't able to incorporate as module
-
-4.2 Specifications
-4.2.1 Accuracy
-4.2.2 Speed
+	- Can only delete from end of input string
 
