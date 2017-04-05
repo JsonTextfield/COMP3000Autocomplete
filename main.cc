@@ -24,7 +24,7 @@ int main(){
 	//Reference: http://stackoverflow.com/questions/5419356/redirect-stdout-stderr-to-a-string  
   	//Reference: https://superuser.com/questions/977693/how-can-i-make-unix-sort-work-properly-using-the-underscore-as-a-field-separator
   	//Reference: http://www.liamdelahunty.com/tips/linux_remove_duplicate_lines_with_uniq.php
-	system("bash -c 'compgen -A function -abck | sort -t_ -k1,1 | uniq > output'");
+	system("bash -c 'compgen -cdf | sort | uniq > output'");
 	infile.open("output");
 	ss << infile.rdbuf() << "\n";
 	infile.close();
@@ -92,7 +92,7 @@ int main(){
 				userInput = word;
 				whole += word;
 			}
-			cout << "\nDone: " << whole << endl;
+			//cout << "\nDone: " << whole << endl;
 			ch = -1;
 			
 			break;
@@ -105,7 +105,7 @@ int main(){
 		/*else if(ch == ' '){
 			userInput += " ";
 		}*/
-		else if(ch == '|'){
+		else if(ch == '|' || ch == ' '){
 			userInput += ch;
 			whole += ch;
 			curCommands[commandIndex] = userInput;
@@ -188,9 +188,9 @@ int main(){
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 	fcntl(STDIN_FILENO, F_SETFL, oldf);
 	
-
+	cout << endl;
 	system(whole.c_str());
-	cout << "Output: " << whole << endl;
+	//cout << "Output: " << whole << endl;
 	
 	if(ch != EOF){
 		ungetc(ch,stdin);
