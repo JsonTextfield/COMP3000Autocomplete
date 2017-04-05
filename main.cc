@@ -24,7 +24,7 @@ int main(){
 	//Reference: http://stackoverflow.com/questions/5419356/redirect-stdout-stderr-to-a-string  
   	//Reference: https://superuser.com/questions/977693/how-can-i-make-unix-sort-work-properly-using-the-underscore-as-a-field-separator
   	//Reference: http://www.liamdelahunty.com/tips/linux_remove_duplicate_lines_with_uniq.php
-	system("bash -c 'compgen -cdf | sort | uniq > output'");
+	system("bash -c '(find *; compgen -cdf) | sort | uniq > output'");
 	infile.open("output");
 	ss << infile.rdbuf() << "\n";
 	infile.close();
@@ -44,7 +44,7 @@ int main(){
 	fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
   
 	string word;
-	
+	cout << "Enter a command\n";
 	while(1){
 		
 		if(userInput.compare("sudo ") == 0){
