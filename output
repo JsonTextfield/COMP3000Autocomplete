@@ -94,6 +94,7 @@ aspell-import
 assistant
 atktopbm
 atobm
+autoc
 autocomplete
 avahi-autoipd
 avahi-browse
@@ -1009,6 +1010,7 @@ lprm
 lp_solve
 lpstat
 lrelease
+LS
 ls
 lsattr
 lsblk
@@ -1706,6 +1708,8 @@ Report/Section2
 Report/Section3
 Report/Section4
 Report/Section5
+Report/test
+Report/test/testfile
 reset
 resize
 resize2fs
@@ -1833,10 +1837,12 @@ simple-scan
 sirtopnm
 size
 skill
+sl
 slabtop
 slattach
 sldtoppm
 sleep
+sl-h
 slogin
 slxdecode
 smproxy

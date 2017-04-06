@@ -9,9 +9,16 @@
 
 using namespace std;
 static const int MAX_SIZE = 10000;
+void autocomplete();
+void clearLine();
 int main(){
+	autocomplete();
+	return 0;
+}
+
+void autocomplete(){
 	struct termios oldt, newt;
-	char ch, command[20];
+	char ch, command[256];
 	string userInput = "";
 	string whole = "";
 	string curCommands[MAX_SIZE];
@@ -24,8 +31,8 @@ int main(){
 	//Reference: http://stackoverflow.com/questions/5419356/redirect-stdout-stderr-to-a-string  
   	//Reference: https://superuser.com/questions/977693/how-can-i-make-unix-sort-work-properly-using-the-underscore-as-a-field-separator
   	//Reference: http://www.liamdelahunty.com/tips/linux_remove_duplicate_lines_with_uniq.php
-	system("bash -c '(find *; compgen -cdf) | sort | uniq > output'");
-	infile.open("output");
+	system("bash -c '(find *; compgen -acdf) | sort | uniq > /home/jason/Desktop/COMP3000/output'");
+	infile.open("/home/jason/Desktop/COMP3000/output");
 	ss << infile.rdbuf() << "\n";
 	infile.close();
 
@@ -46,15 +53,7 @@ int main(){
 	string word;
 	cout << "Enter a command\n";
 	while(1){
-		
-		if(userInput.compare("sudo ") == 0){
-			curCommands[commandIndex] = userInput;
-			userInput = "";
-			commandIndex++;
-			
-			cout << "\r" << whole;
-		}
-
+	
 		ch = getchar(); //Does not block
 		if(ch == -1) continue;
 		
@@ -75,9 +74,7 @@ int main(){
 					escape << diff;
 					whole.erase(whole.size() - userInput.size());
 					userInput = word;
-					
 					whole += word;
-					//cursorPosition += diff;
 				}
 				
 				
@@ -102,21 +99,7 @@ int main(){
 			userInput = "";
 			cout << "\ncleared\n";
 		}*/
-		/*else if(ch == ' '){
-			userInput += " ";
-		}*/
-		else if(ch == '|' || ch == ' '){
-			userInput += ch;
-			whole += ch;
-			curCommands[commandIndex] = userInput;
-			userInput = "";
-			commandIndex++;
-			
-			cout << "\r" << whole;
-			
-			//userInput += " ";
-			//cout << "\npipe\n";
-		}
+		//else 
 
 		else {
 
@@ -124,64 +107,77 @@ int main(){
 		
 			//the following lines update the suggestion text
 			//int cursorPosition = whole.size() - userInput.size();
-			int size = whole.size() + word.size();
-			string spaces = string(size, ' ');
-			cout << "\r" << spaces << "\r";
-		
+			
+			clearLine();
+			
 		
 			if(ch == 127) { //if backspace is pressed
-				//cout << "UserInputSize: " << whole.size() << endl;
-				spaces = (whole.size()+1, ' ');
-				cout << "\r" << spaces << "\r";
+				cout << "\r" << whole;
 				if (userInput.size() > 0){
 					userInput.erase(userInput.size() - 1);
+					
 				}
 				
+				if(whole.size() > 0){
+					whole.erase(whole.size() - 1);
+					
+				}
+				//cout << "\n\"" <<userInput<<"\""<<endl;
 				if (userInput.size() == 0){
 					if(commandIndex > 0){
 						commandIndex--;
 						userInput = curCommands[commandIndex];
 						curCommands[commandIndex] = "";
 					}
-					//cout << "\nsize: " <<whole.size()<<endl;
+					if(commandIndex == 0){
+						word = "";
+					}
+					
 					
 				}
-				if(whole.size() > 0){
-					whole.erase(whole.size() - 1);
-				}
-				cout << whole;
+				
 			}
 			else {
-				
 				userInput += ch;
 				whole += ch;
+				
+				if(ch == '|' || ch == ' '){
+
+					curCommands[commandIndex] = userInput;
+					userInput = "";
+					commandIndex++;
+			
+				}
+				
+				
 				if(userInput[0] == ' '){
 					userInput.erase(0,1);
-					//if(commandIndex > 0){
-					//	whole.erase(0,1);
-					//}
-					//cout << "\033[D";
+					whole.erase(whole.size() - userInput.size(), whole.size() - (userInput.size() - 1));
 				}
 			}
 		
 		
-			if (userInput.size() > 0)
-				for(int i=0; i < MAX_SIZE; i++){
+			if (userInput.size() > 0){
+				for(int i = 0; i < MAX_SIZE; i++){
 					word = array[i];
 
 					if (word.compare(0, userInput.size(), userInput) == 0){ //if the user's input matches a program...
 					
 						int cursorPosition = whole.size() - userInput.size();
 						if(cursorPosition > 0)
-							cout << "\r\033["<< cursorPosition <<"C\033[1;36m" << word << "\033[0m";
+							cout << "\r\033["<< cursorPosition <<"C\033[1;36m" << word << "\033[0m\r";
 						else
-							cout << "\r\033[1;36m" << word << "\033[0m";
+							cout << "\r\033[1;36m" << word << "\033[0m\r";
 						
 						break;
 					}
 				}
-		
-			cout << "\r" << whole;
+			}
+			else{
+				clearLine();
+			}
+			//cout << "\nUserInputSize: " << userInput.size() << endl;
+			cout << whole;
 		}
 	}
   
@@ -196,9 +192,12 @@ int main(){
 		ungetc(ch,stdin);
 		putchar(ch);
 		scanf("%s",command);
-		return 1;
+		//return 1;
   	}
-	return 0;
+	//autocomplete();
+}
+void clearLine(){
+	cout << "\33[2K\r";
 }
 
 
