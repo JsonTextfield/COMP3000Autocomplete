@@ -9,29 +9,26 @@
 
 using namespace std;
 static const int MAX_SIZE = 10000;
-void autocomplete();
-void clearLine();
-int main(){
-	autocomplete();
-	return 0;
+
+void clearLine(){
+	cout << "\33[2K\r";
 }
 
 void autocomplete(){
 	struct termios oldt, newt;
 	char ch, command[256];
+	
 	string userInput = "";
 	string whole = "";
 	string curCommands[MAX_SIZE];
+	
 	int commandIndex = 0;
-	int cursorPosition = 0;
 
 	stringstream ss;
 	ifstream infile;
 
-	//Reference: http://stackoverflow.com/questions/5419356/redirect-stdout-stderr-to-a-string  
-  	//Reference: https://superuser.com/questions/977693/how-can-i-make-unix-sort-work-properly-using-the-underscore-as-a-field-separator
-  	//Reference: http://www.liamdelahunty.com/tips/linux_remove_duplicate_lines_with_uniq.php
-	system("bash -c '(find *; compgen -acdf) | sort | uniq > /home/jason/Desktop/COMP3000/output'");
+	//Reference: http://www.liamdelahunty.com/tips/linux_remove_duplicate_lines_with_uniq.php
+	system("bash -c '(find *; compgen -cdf) | sort | uniq > /home/jason/Desktop/COMP3000/output'");
 	infile.open("/home/jason/Desktop/COMP3000/output");
 	ss << infile.rdbuf() << "\n";
 	infile.close();
@@ -95,24 +92,16 @@ void autocomplete(){
 			break;
 		}
 
-		/*else if(ch == '1'){
-			userInput = "";
-			cout << "\ncleared\n";
-		}*/
-		//else 
 
 		else {
 
-			//cout << "\npressed: "<< int(ch) << endl;
 		
 			//the following lines update the suggestion text
-			//int cursorPosition = whole.size() - userInput.size();
 			
 			clearLine();
 			
 		
 			if(ch == 127) { //if backspace is pressed
-				cout << "\r" << whole;
 				if (userInput.size() > 0){
 					userInput.erase(userInput.size() - 1);
 					
@@ -122,7 +111,6 @@ void autocomplete(){
 					whole.erase(whole.size() - 1);
 					
 				}
-				//cout << "\n\"" <<userInput<<"\""<<endl;
 				if (userInput.size() == 0){
 					if(commandIndex > 0){
 						commandIndex--;
@@ -176,7 +164,6 @@ void autocomplete(){
 			else{
 				clearLine();
 			}
-			//cout << "\nUserInputSize: " << userInput.size() << endl;
 			cout << whole;
 		}
 	}
@@ -186,18 +173,19 @@ void autocomplete(){
 	
 	cout << endl;
 	system(whole.c_str());
-	//cout << "Output: " << whole << endl;
 	
 	if(ch != EOF){
 		ungetc(ch,stdin);
 		putchar(ch);
 		scanf("%s",command);
-		//return 1;
   	}
-	//autocomplete();
+	//autocomplete(); //for looping forever
 }
-void clearLine(){
-	cout << "\33[2K\r";
+
+int main(){
+	autocomplete();
+	return 0;
 }
+
 
 

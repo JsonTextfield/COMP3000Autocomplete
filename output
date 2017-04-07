@@ -477,7 +477,6 @@ filterdiff
 find
 findfs
 findmnt
-firefox
 fitstopnm
 fixcvsdiff
 fixparts
@@ -635,6 +634,8 @@ gnome-text-editor
 gnome-thumbnail-font
 gnome-www-browser
 gold
+google-chrome
+google-chrome-stable
 gouldtoppm
 gparted
 gpartedbin
@@ -1253,6 +1254,7 @@ online-accounts-preferences
 open
 openssl
 openvt
+opera
 opldecode
 orca
 orca-dm-wrapper
